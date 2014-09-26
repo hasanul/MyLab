@@ -1,0 +1,23 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Editing Music</title>
+<% end %>
+<div class="contenttitle_area">
+        <h2 class="logintitle2">Editing Music</h2>
+</div>
+
+<%@mobile_device_class=""%>
+<%= render :partial => 'profile/index_left' %>
+<div class="rightpartWrap col-md-10"> <!-- rightpartWrap start -->
+    <div class="rightPart clearfix"> <!-- rightPart start -->
+        <div class="contentCol col-md-9"> <!-- contentCol start -->
+            <div class="content">
+                <%= render 'form' %>
+                <%= link_to 'Show', @audio %> |
+                <%= link_to 'Back', audios_path %>
+            </div>
+        </div> <!-- contentCol end -->
+        <%= render :partial => 'profile/index_right' %>
+    </div> <!-- rightPart end -->
+</div> <!-- rightpartWrap end -->
+<%@mobile_device_class=" mobile_device"%>
+<%= render :partial => 'profile/index_left' %>

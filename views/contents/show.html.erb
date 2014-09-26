@@ -1,0 +1,59 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Content Details</title>
+<% end %>
+
+<div class="profiletitle">Content Details</div>
+<div class="clr">&nbsp;</div>
+
+<div id="ddtags" class="ddtags-full-width">
+
+  <dl>
+    <dt><strong>Title:</strong>:</dt>
+    <dd><%= @content.title %></dd>
+  </dl>
+  
+  <dl>			
+    <dt><strong>Alias</strong>:</dt>
+    <dd><%= @content.alias %></dd>
+  </dl>
+  
+  <dl>			
+    <dt><strong>Position</strong>:</dt>
+    <dd><% content_position = case @content.position
+              when 'footer' then "Footer Menu"
+              when 'right' then "Middle Right"
+              else "Top Menu"
+          end
+          %>
+
+        <%=content_position%>
+      </dd>
+  </dl>
+  
+  <dl>			
+    <dt><strong>Hits</strong>:</dt>
+    <dd><%= @content.hits %></dd>
+  </dl>
+  
+  <dl>			
+    <dt><strong>Published</strong>:</dt>
+    <dd>
+      <% if @content.published
+        %>
+          <img src="/assets/tick_green_icon.png" alt="" />
+        <%
+        else
+        %>
+          <img src="/assets/unpublish_icon.png" alt="" />
+        <%
+        end
+      %>
+    </dd>
+  </dl>
+  
+  <dl>			
+    <dt><%= link_to 'Edit', edit_content_path(@content) %></dt>
+    <dd><%= link_to 'Back', contents_path %></dd>
+  </dl>
+
+</div>

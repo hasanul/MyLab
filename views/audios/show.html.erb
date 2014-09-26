@@ -1,0 +1,59 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Audio Details</title>
+<% end %>
+
+
+<div class="contenttitle_area">
+        <h2 class="logintitle2">Music Details</h2>
+</div>
+
+<%@mobile_device_class=""%>
+<%= render :partial => 'profile/index_left' %>
+<div class="rightpartWrap col-md-10"> <!-- rightpartWrap start -->
+        <div class="rightPart clearfix"> <!-- rightPart start -->
+                <div class="contentCol col-md-9"> <!-- contentCol start -->
+                        <div class="content">
+                            <div id="ddtags">
+							<div class="music_new_wrapper">
+                              <h1><%= @audio.title %></h1>
+                              
+                              <dl>
+                                <dd style="width:100%;"><%= @audio.desc %></dd>
+                              </dl>
+                              
+                              <dl>
+                                <dd style="width:40%;"><%=get_mediaelement_audio_player(@audio.path.to_s).html_safe%></dd>
+                              </dl>
+                              
+                              <dl>
+                                <dt>Free?</dt>
+                                <dd><%= @audio.is_free ? 'Yes' : 'No'%></dd>
+                              </dl>
+                              
+                              <dl>
+                                <dt>Price</dt>
+                                <dd><%= @audio.price %></dd>
+                              </dl>
+                              
+                              <dl>
+                                <dt>Downloadable?</dt>
+                                <dd><%= @audio.is_downloadable ? 'Yes' : 'No'%></dd>
+                              </dl>
+                              
+                              <dl>
+                                <dt>Sold</dt>
+                                <dd><%= getMusicSoldCount(@audio.id)%></dd>
+                              </dl>
+                              
+                              <dl>
+                                <dt><%= link_to 'Delete', user_audio_path(@user, @audio), method: :delete, data: { confirm: 'Are you sure?' } %> | <%= link_to 'Back', user_audios_path %></dt>
+                              </dl>
+                            </div>
+                            </div>    
+                        </div>
+                </div> <!-- contentCol end -->
+                <%= render :partial => 'profile/index_right' %>
+        </div> <!-- rightPart end -->
+</div> <!-- rightpartWrap end -->
+<%@mobile_device_class=" mobile_device"%>
+<%= render :partial => 'profile/index_left' %>

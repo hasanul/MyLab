@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%= yield :page_title %>
+  
+  <!-- Specific Metas -->
+  <meta charset="utf-8">
+  <%= yield :page_meta %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <!-- META FOR IOS & HANDHELD -->
+  <meta name="HandheldFriendly" content="true" />
+  <meta name="apple-mobile-web-app-capable" content="YES" />
+  
+  <%= stylesheet_link_tag "application-all", media: "all", "data-turbolinks-track" => true %>
+  
+  <!--[if IE 7]>
+  <%= stylesheet_link_tag "ie7", media: "all", "data-turbolinks-track" => true %>
+  <![endif]-->
+
+  <!--[if IE 8]>
+  <%= stylesheet_link_tag "ie8", media: "all", "data-turbolinks-track" => true %>
+  <![endif]-->
+
+  <!--[if IE 9]>
+  <%= stylesheet_link_tag "ie9", media: "all", "data-turbolinks-track" => true %>
+  <![endif]-->
+
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <%= csrf_meta_tags %>
+  
+  <!-- Favicon and Touch icons -->
+  <link rel="shortcut icon" href="/assets/favicon.ico" />
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/apple-touch-icon-144x144-precomposed.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/apple-touch-icon-114x114-precomposed.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/apple-touch-icon-72x72-precomposed.png" />
+  <link rel="apple-touch-icon-precomposed" href="/assets/apple-touch-icon-57x57-precomposed.png" />
+  
+</head>
+
+<body>
+  
+  <div id="wrapperOuter">
+    
+    <%= render 'layouts/header' %>
+    
+    <div class="container containerWrap clearfix">
+      
+        <!-- notice or error messages -->    
+        <%= render 'layouts/messages' %>
+  
+        <%= yield %>
+        
+    </div>
+      
+  </div>
+    
+  <%= render 'layouts/footer' %>
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  jQuery('select#user_country_id').change(function(){
+    var country_id = jQuery(this).val();
+    if(country_id == 223)//us
+    {
+      jQuery('.countryDependent').show();      
+      select_wrapper = jQuery('#country_states_wrapper');
+      jQuery('select', select_wrapper).attr('disabled', true);
+      url = "/countries/get_states?country_id="+country_id;
+      select_wrapper.load(url);  
+    }
+    else//hide state and zip
+    {
+      jQuery('.countryDependent').hide();      
+      if(jQuery('#user_state_id').length > 0)
+	 jQuery('#user_state_id').val('')
+    }
+  });
+})
+</script>
+<div class="inputwrap_editprofile clearfix">
+      <%= label_tag(:first_name, "First Name:") %>
+      <%= f.text_field :first_name, class: "form-control" %>
+</div>
+<div class="inputwrap_editprofile clearfix">
+      <%= label_tag(:last_name, "Last Name:") %>
+      <%= f.text_field :last_name, class: "form-control" %>
+</div>
+<div class="inputwrap_editprofile clearfix">
+      <%= label_tag(:email, "Email Address:") %>
+      <%= f.email_field :email, class: "form-control" %>
+</div>
+<div class="inputwrap_editprofile clearfix">
+      <%= label_tag(:country_id, "Country:") %>
+      <%= f.collection_select(:country_id, Country.all, :id, :country_name, {:prompt => "Please Select Your Country"}, {:class => "form-control"}) %>
+</div>
+<div class="inputwrap_editprofile clearfix countryDependent"<%=(current_user.country_id.to_i!=223)?" style=display:none;":""%>>
+      <%= label_tag(:state_id, "State:") %>
+      <div id="country_states_wrapper">
+	<%= render partial: 'countries/state_select', locals: {country_id: resource.country_id, state_id: resource.state_id} %>
+      </div>
+</div>
+<div class="inputwrap_editprofile clearfix">
+      <%= label_tag(:city, "City:") %>
+      <%= f.text_field :city, class: "form-control" %>
+</div>
+<div class="inputwrap_editprofile clearfix">
+      <%= label_tag(:zip, "Zip Code:") %>
+      <%= f.text_field :zip, class: "form-control" %>
+</div>
+
+<% if @user_identity==nil %>
+<div class="inputwrap_editprofile clearfix">
+      <%= label_tag(:password, "Choose Password:") %>
+      <%= f.password_field :password, class: "form-control", :autocomplete => "off" %> <i>(leave blank if you don't want to change it)</i>
+</div>
+<div class="inputwrap_editprofile clearfix">
+      <%= label_tag(:password_confirmation, "Retype Password:") %>
+      <%= f.password_field :password_confirmation, class: "form-control" %>
+</div>
+<div class="inputwrap_editprofile clearfix">
+      <%= label_tag(:current_password, "Current Password:") %>
+      <%= f.password_field :current_password, class: "form-control" %> <i>(we need your current password to confirm your changes)</i>
+</div>
+<div class="inputwrap_editprofile proimg clearfix">
+      <label id="label">Profile Pic:</label>
+      <div class="profile_img">
+	      <span><%= image_tag(getUserAvatar(@current_user,"large"), :alt => "") %></span>
+	      <br>
+	      
+	       <% if @current_user.profile_photo.to_s!="" %>
+	       <span><a href="javascript:void(0);" id="add_new_trigger">Remove and add new</a></span>
+	       <% else %>
+	       <span><a href="javascript:void(0);" id="add_new_trigger">Add new</a></span>
+	       <% end %>
+      </div>
+</div>
+<% end %>
+
+<div id="add_new_wrapper" class="inputwrap_editprofile upload two clearfix" style="display:none;">			
+   <%= label_tag(:profile_photo, "Upload Profile Photo:") %>
+   <div style="width:65%; display: inline-block;">
+      <div id="queue"></div>
+      <input id="photo_upload" name="photo_upload" type="file" >
+      <%= f.hidden_field :profile_photo %>
+      
+      <div id="uploadedPhotoPrevDiv" style="display:none;">
+	 <div id="photo_preview" style="text-align:center;"></div>
+	 <input type="hidden" name="crop_x1" id="x1" value="0" />
+	 <input type="hidden" name="crop_y1" id="y1" value="0" />
+	 <input type="hidden" name="crop_x2" id="x2" value="215" />
+	 <input type="hidden" name="crop_y2" id="y2" value="215" />
+	 <input type="hidden" name="crop_w" id="w" value="215" />
+	 <input type="hidden" name="crop_h" id="h" value="215" />
+      </div>
+   </div>   
+</div>
+<input type="submit" value="Submit" class="submit btn">
+
+<style type="text/css">
+.preview_data {
+   font-weight:bold;
+}
+.uploadify-button {
+   background-color: #B61C1C;
+   border: none;
+   padding: 0;
+}
+.uploadify:hover .uploadify-button {
+   background-color: #B61C1C;
+}
+</style>
+
+
+<script type="text/javascript">
+jQuery(function() {
+      jQuery('#add_new_trigger').click(function(){
+	 jQuery('#add_new_wrapper').show();
+      })
+      
+      jQuery('#photo_upload').uploadify({
+	 'debug'    : false,
+	 'fileSizeLimit' : '2MB',
+	 'fileTypeDesc' : 'Image Files',
+	 'fileTypeExts' : '*.gif; *.jpg; *.png', 
+	 'multi'    : false,
+	 'width'    : 100,
+	 'method'   : 'post',
+	 'fileObjName' : 'photo_upload',
+	 'formData'     : {
+		 'timestamp' : (new Date()).getTime(),
+		 'token'     : (new Date()).getTime(),
+		 'authenticity_token' : '<%= form_authenticity_token %>'
+	 },
+	 'swf'      : '<%= asset_path "uploadify/uploadify.swf" %>',
+	 'uploader' : '/application/upload_photo',
+	 'onSelect' : function(file) {
+	    jQuery('#photo_preview').html('').hide();
+	    jQuery("#uploadedPhotoPrevDiv").hide();
+	    //jQuery('#final_photo_preview').html('').hide();
+	    jQuery('#user_profile_photo').val('');
+	 },
+	 'onUploadSuccess' : function(file, data, response) {
+	    
+	    setTimeout(function() {
+		  jsonData = JSON.parse(data);	    
+		  file.name = jsonData.files[0].name;
+		  jQuery('#photo_preview').show().html('<img src="/uploads/tmp/'+file.name+'?d='+ (new Date()).getTime()+'" id="crop_target" />');
+		  jQuery("#uploadedPhotoPrevDiv").show();
+		  //jQuery('#final_photo_preview').show().html('<img src="/uploads/tmp/'+file.name+'?d='+ (new Date()).getTime()+'" id="crop_target" />');
+		  jQuery('#user_profile_photo').val(jsonData.files[0].name);
+		  
+		  init_crop();
+	    }, 3500);
+	 },
+	 'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+	    alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
+	 },
+	 'onUploadComplete' : function(file) {
+	    //console.log(file);
+	    /*jQuery('#photo_preview').show().html('<img src="/uploads/tmp/'+file.name+'?d='+ (new Date()).getTime()+'" id="crop_target" width="100px" />');
+	    jQuery('#final_photo_preview').show().html('<img src="/uploads/tmp/'+file.name+'?d='+ (new Date()).getTime()+'" id="crop_target" width="100px" />');
+	    jQuery('#user_profile_photo').val(file.name);*/
+	 }
+      });
+});
+
+function init_crop(){
+   jQuery('#crop_target').Jcrop({
+      setSelect: [ 0, 0, 215, 215 ],
+      allowResize: true,
+      minSize: [ 215, 215 ],
+      aspectRatio: 1 / 1,
+      onChange: function(c){
+	 jQuery('#x1').val(c.x);
+	 jQuery('#y1').val(c.y);
+	 jQuery('#x2').val(c.x2);
+	 jQuery('#y2').val(c.y2);
+	 jQuery('#w').val(c.w);
+	 jQuery('#h').val(c.h);
+      }
+   });
+}
+</script>

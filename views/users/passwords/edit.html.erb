@@ -1,0 +1,30 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Change Password</title>
+<% end %>
+
+<div class="contentCol">
+    <div class="content">
+        <!-- forgot pass start -->
+        <h2 class="logintitle2">Change Password</h2>
+        
+        <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
+
+        <%= devise_error_messages! %>
+        <%= f.hidden_field :reset_password_token %>
+        
+        <div class="forgot_passWrap">
+                <div class="inputwrap_forgotpass clearfix">
+                        <label id="email_add" name="email_add">New password:</label>
+                        <%= f.password_field :password, :autofocus => true, :class => 'form-control' %>
+                </div>
+                
+                <div class="inputwrap_forgotpass clearfix">
+                        <label id="email_add" name="email_add">Confirm new password:</label>
+                        <%= f.password_field :password_confirmation, :class => 'form-control' %>
+                </div>
+                <%= f.submit "Change my password", :class => 'submit btn' %>
+        </div>
+        <% end %>
+        <!-- forgot pass end -->
+    </div>	
+</div>

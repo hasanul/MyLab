@@ -1,0 +1,90 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Contents Manager</title>
+<% end %>
+
+<div class="profiletitle">Contents Manager</div>
+<div class="clr">&nbsp;</div>
+
+<div class="searchWrap">
+	<div class="searchbox">
+                <form id="searchForm" name="searchForm" action="" method="get">
+                  <div class="searchboxinner">
+                    <input type="text" name="search" class="textbox1" value="<%=h(@search)%>"/>
+                    <input type="submit" value="Search" class="btn"/>
+                    <input style="margin-left:4px;" type="button" class="btn" value="Reset" onclick="document.searchForm.search.value='';document.searchForm.submit();">
+                  </div>
+                </form>		
+	</div>
+	<div class="add-new"><%= link_to 'New Content', new_content_path %></div>
+	<div class="clr">&nbsp;</div>
+</div>
+<div class="tableWrap">
+  <form id="dataFormItem" name="dataFormItem" action="" method="post">
+    <table class="table">
+           <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Title</th>
+                    <th>Alias</th>
+		    <th>Position</th>
+                    <th style="width: 125px;">Published</th>
+                    <!--th style="width: 125px;">Ordering<a href="javascript:void(0);" onclick="saveOrdering();"><%= image_tag("/assets/filesave_icon.png") %></a></th-->
+                    <th style="width: 150px;">Action</th>
+                  </tr>
+           </thead>
+           <tbody>
+                  <%
+		    itemNo = 0
+                    if params[:page].to_i > 1
+		      itemNo = (params[:page].to_i - 1)*10
+                    end
+                    
+                    @contents.each do |content|
+                    itemNo = itemNo + 1
+                  %>
+                    <tr>
+                      <td><%=itemNo%></td>
+                      <td>
+                        <%=link_to content.title, content %>
+                      </td>
+                      <td><%=content.alias %></td>
+		      
+		      <td><% content_position = case content.position
+              when 'footer' then "Footer Menu"
+              when 'right' then "Middle Right"
+              else "Top Menu"
+          end
+          %>
+
+        <%=content_position%></td>
+                      
+                      <td>
+                        <%if content.published%>
+                          <img src="/assets/tick_green_icon.png" alt="" />
+                        <%else%>
+                          <img src="/assets/unpublish_icon.png" alt="" />
+                        <%end%>
+                        
+                      </td>
+                      <!--td><input type="text" name="ordering[<%=content.id%>]" class="order_input" value="<%= content.ordering.to_i %>"/></td-->
+                      <td>
+                          <%= link_to image_tag("/assets/edit_icon.png"), edit_content_path(content) %>                          
+                          &nbsp;&nbsp;&nbsp;
+                          <%= link_to image_tag("/assets/delete_icon.png"), content, method: :delete, data: { confirm: 'Are you sure?' } %>
+                      </td>
+                    </tr>
+                  <% end %>                  
+           </tbody>
+    </table>
+    <%= will_paginate @content, :params=>{:search=>h(@search)} %>
+  </form>
+</div>
+<script type="text/javascript">
+function saveOrdering()
+{
+  if(jQuery('.order_input').length > 0)
+  {    
+    jQuery('#dataFormItem').attr('action','<%=plans_save_ordering_path%>').submit();
+  }
+}
+</script>

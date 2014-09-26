@@ -1,0 +1,79 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Music Category Manager</title>
+<% end %>
+
+<div class="profiletitle">Music Category Manager</div>
+<div class="clr">&nbsp;</div>
+
+<div class="searchWrap">
+	<div class="searchbox">
+                <form id="searchForm" name="searchForm" action="" method="get">
+                  <div class="searchboxinner">
+                    <input type="text" name="search" class="textbox1" value="<%=h(@search)%>"/>
+                    <input type="submit" value="Search" class="btn"/>
+                    <input style="margin-left:4px;" type="button" class="btn" value="Reset" onclick="document.searchForm.search.value='';document.searchForm.submit();">
+                  </div>
+                </form>		
+	</div>
+	<div class="add-new"><%= link_to 'Add New', new_music_category_path %></div>
+	<div class="clr">&nbsp;</div>
+</div>
+
+<div class="tableWrap">
+  <form id="dataFormItem" name="dataFormItem" action="" method="post">
+    <table class="table">
+           <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Name</th>
+                    <th>Home page</th>                                        
+                    <th style="width: 125px;">Ordering<a href="javascript:void(0);" onclick="saveOrdering();"><%= image_tag("/assets/filesave_icon.png") %></a></th>
+                    <th style="width: 150px;">Action</th>
+                  </tr>
+           </thead>
+           <tbody>
+                  <%
+                    rowNo = 0
+                    if params[:page].to_i > 1
+		      rowNo = (params[:page].to_i - 1)*10
+                    end
+                    @music_categories.each do |row|
+                    rowNo = rowNo + 1
+                  %>
+                    <tr>
+                      <td><%=rowNo%></td>                      
+                      <td><%=link_to row.name, row %></td>		      
+                      <td>
+                        <%if (row.show_at_home_page)
+                        %>
+                          Yes
+                        <%
+                        else
+                        %>
+                          No
+                        <%
+                        end      
+                        %>                        
+                      </td>
+                      <td><input type="text" name="ordering[<%=row.id%>]" class="order_input" value="<%= row.ordering.to_i %>"/></td>
+                      <td>
+                          <%= link_to image_tag("/assets/edit_icon.png"), edit_music_category_path(row) %>                          
+                          &nbsp;&nbsp;&nbsp;
+                          <%= link_to image_tag("/assets/delete_icon.png"), music_category_path(row),method: :delete, data: { confirm: 'Are you sure?' } %>
+                      </td>
+                    </tr>
+                  <% end %>                  
+           </tbody>
+    </table>
+    <%= will_paginate @music_categories, :params=>{:search=>h(@search)} %>
+  </form>
+</div>
+<script type="text/javascript">
+function saveOrdering()
+{
+  if(jQuery('.order_input').length > 0)
+  {    
+    jQuery('#dataFormItem').attr('action','<%=music_categories_save_ordering_path%>').submit();
+  }
+}
+</script>

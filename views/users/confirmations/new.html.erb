@@ -1,0 +1,24 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Resend confirmation</title>
+<% end %>
+
+<div class="contentCol">
+    <div class="content">
+        <!-- login start -->
+        <h2 class="logintitle2">Resend confirmation instructions</h2>
+        
+        <%= form_for(resource, :as => resource_name, :url => user_confirmation_path, :html => { :method => :post }) do |f| %>
+	<%= devise_error_messages! %>
+	
+        <div class="loginWrap col-md-6">
+	    <div class="inputwrap_login clearfix">
+		<label id="email_add" name="email_add">Email Address:</label>
+		<%= f.email_field :email, :autofocus => true, :class => 'form-control' %>
+	    </div>
+	    <%= f.submit "Resend confirmation instructions", :class => 'submit btn' %>
+	    <%= render "users/shared/links" %>
+        </div>
+        
+        <% end %>
+    </div>	
+</div>

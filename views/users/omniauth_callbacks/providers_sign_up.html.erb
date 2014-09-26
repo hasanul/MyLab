@@ -1,0 +1,85 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Sign Up</title>
+<% end %>
+
+<div class="contentCol">
+    <div class="content">
+        <!-- forgot pass start -->
+        <h2 class="logintitle2">Sign Up</h2>
+        
+	<div class="registercenter provider_signup">
+	    
+	    <!-- step 1 start -->
+	    <div id="step1">
+		<div class="col-md-6 stepone_left">
+		  
+		    <form action="/users/omniauth_callbacks_confirm" name="provider_form" id="provider_form" method="POST">
+	
+			<div class="inputwrap_step clearfix">
+			      <label id="email_add" name="email_add">Email:</label>
+			      <% if @provider=='facebook' || @provider=='google_oauth2' %>
+			      <%= @user_email%>
+			      <% end %>
+			      
+			      <% if @provider=='twitter' %>
+			      <%= text_field_tag :email, '', class: "form-control required email", remote: "/application/check_email" %>
+			      <% end %>
+			</div>
+			
+			<div class="inputwrap_step clearfix">
+			      <label id="email_add" name="email_add">Choose User Type:</label>
+			      <%= radio_button_tag(:user_type, "artist", :checked => true) %>
+			      <%= label_tag(:user_type_artist, "Artist", :class => 'user_type') %>
+			      <%= radio_button_tag(:user_type, "fan") %>
+			      <%= label_tag(:user_type_fan, "Fan",:class => 'user_type') %>
+			</div>
+			
+			<div class="inputwrap_step clearfix" id="plan_wrapper" style="display:block;">
+			      <label id="email_add" name="email_add">Choose Account Type:</label>
+			      <%= select_tag :plan_id, options_from_collection_for_select(Plan.where('published = 1'), :id, :name), { :class => "form-control" } %>
+			</div>
+			
+			<input type="submit" name="submit" value="Submit" class="submit btn" />
+		    </form>
+		</div>
+	    
+		<div class="col-md-6 stepone_right" id="plan_explanation">
+		   
+		   <% plans = Plan.where('published = 1') %>
+		   <% if plans.count > 0 %>
+		      <ul>
+			 <% plans.each do |plan| %>
+			    <li><strong><%=plan.name%></strong></li>
+			    <li><%=plan.desc%></li>
+			 <% end %>
+		      </ul>
+		   <% end %>
+		   
+		</div>
+	    </div>
+	</div>
+    </div>	
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  jQuery('#provider_form').validate({
+    errorClass: 'invalid',
+    messages:{
+	'email': {				    
+	    remote: jQuery.format("This email {0} is already in use")
+	}
+    }
+  });
+  
+  jQuery('#user_type_artist').click(function(){
+    jQuery('#plan_wrapper').show();
+    jQuery('#plan_explanation').show();
+  })
+  jQuery('#user_type_fan').click(function(){
+    jQuery('#user_plan_id').val(1);
+    jQuery('#plan_wrapper').hide();
+    jQuery('#plan_explanation').hide();
+  })
+});
+</script>

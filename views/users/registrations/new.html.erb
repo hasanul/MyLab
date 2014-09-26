@@ -1,0 +1,38 @@
+<div class="contentCol">
+   <div class="content">
+    
+      <% if @user_type == 'artist' %>
+        <% content_for :page_title do %>
+          <title>ArtistNXT | Artist Register</title>
+        <% end %>
+        <script type="text/javascript">
+          var registrationType = 'artist';
+        </script>
+        <h2 class="logintitle2">Artist Registration</h2>
+      <% else %>
+        <% content_for :page_title do %>
+          <title>ArtistNXT | Fan Register</title>
+        <% end %>
+        <script type="text/javascript">
+          var registrationType = 'fan';
+        </script>
+        <h2 class="logintitle2">Fan Registration</h2>
+      <% end %>
+      
+      <%= javascript_include_tag "validate.registration" %>
+      
+      <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+        <%= devise_error_messages! %>
+        
+        <%= f.hidden_field :user_type, :value => @user_type %>
+        
+        <% if @user_type == 'artist' %>
+        <%= render :partial => 'artist_form', :locals => { :f => f } %>
+        <% else %>
+        <%= render :partial => 'fan_form', :locals => { :f => f } %>
+        <% end %>
+      
+      <% end %>
+
+   </div>	
+</div>

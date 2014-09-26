@@ -1,0 +1,98 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Subscription Details</title>
+<% end %>
+
+<div class="profiletitle">Subscription Details</div>
+<div class="clr">&nbsp;</div>
+<%subscribedUser = getUserByID(@subscription.userid)
+plan = getPlanById(@subscription.plan)
+%>
+<div id="ddtags" class="admin_subscription_view subscription">
+
+  <dl>
+    <dt><strong>User:</strong></dt>
+    <dd>
+      <% if subscribedUser!=nil
+      %>
+        <%=subscribedUser.first_name%> <%=subscribedUser.last_name%>
+      <%end%>
+    </dd>
+  </dl>
+  
+  <dl>			
+    <dt>Created at:</dt>
+    <dd><%=@subscription.created_at.to_time.utc.strftime('%Y-%m-%d')%></dd>
+  </dl>
+  
+  <dl>			
+    <dt>Method:</dt>
+    <dd><%= @subscription.subscr_method %></dd>
+  </dl>
+  
+  <%= form_for(@subscription, url: {action: @form_action}) do |f| %>
+  
+    <dl>			
+      <dt>Plan:</dt>
+      <dd>
+        <%=select_tag "plan", options_from_collection_for_select(Plan.where('published = 1'), "id", "name",@subscription.plan)%>
+      </dd>
+    </dl>
+  
+    <dl>			
+      <dt>Status:</dt>
+      <dd>
+        
+          <%=hidden_field_tag 'id', @subscription.id%>
+          <%=select_tag "status", options_for_select([ "Active", "Pending" ], @subscription.status), class:"wrapstatus"%>
+        
+      </dd>
+    </dl>
+    
+    <dl>			
+      <dt>Expired at:</dt>
+      <dd>
+        <% if @subscription.lifetime%>
+          Lifetime
+        <%
+        elsif @subscription.status == "Active"
+          expirationDate = ""
+          if @subscription.expiration != nil
+            expirationDate = @subscription.expiration.to_time.utc.strftime('%Y-%m-%d')
+          end
+        %>
+            <div class="leftbuttonwraptext"><%=text_field_tag 'expiration_date', expirationDate, class: "datepicker"%></div>            
+            <script type="text/javascript">
+              jQuery( document ).ready(function() {
+                jQuery( "#expiration_date" ).datepicker({
+                  dateFormat: "yy-mm-dd",
+                  buttonImage: "/assets/calendar.gif",
+                  buttonImageOnly: true,
+                  //minDate:'0d+',
+                  showOn: "both"
+                });
+              });
+            </script>          
+        <%
+        else
+        %>
+        N/A
+        <%end%>
+        <div class="leftbuttonwrap"><input type="submit" class="btn floatleftright subscription" value="Save"></div>
+      </dd>
+    </dl>
+  <% end %>
+  
+  <%if @lastInvoice!=nil && !@lastInvoice.active%>
+    <dl>			
+      <dt>&nbsp;</dt>
+      <dd>
+        <%= link_to 'Clear invoice', clear_invoice_path(:invoice_number=>@lastInvoice.invoice_number) %>
+      </dd>
+    </dl>
+  <%end%>
+  
+  <dl>			
+    <dd><%= link_to 'Back', subscriptions_path %></dd>
+  </dl>
+
+</div>

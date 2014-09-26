@@ -1,0 +1,121 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Upload Videos</title>
+<% end %>
+
+<div class="contenttitle_area">
+        <h2 class="logintitle2">Upload Videos</h2>
+</div>
+<%@mobile_device_class=""%>
+<%= render :partial => 'profile/index_left' %>
+<div class="rightpartWrap col-md-10"> <!-- rightpartWrap start -->
+        <div class="rightPart clearfix"> <!-- rightPart start -->
+                <div class="contentCol col-md-9"> <!-- contentCol start -->
+                        <div class="content">
+                                <!-- upload video start -->
+                                <div class="uploadimageWrap">
+                                    <%= form_for([@user, @video]) do |f| %>
+  
+                                      <% if @video.errors.any? %>
+                                        <div id="error_explanation">
+                                          <h2><%= pluralize(@video.errors.count, "error") %> prohibited this video from being saved:</h2>
+                                    
+                                          <ul>
+                                          <% @video.errors.full_messages.each do |msg| %>
+                                            <li><%= msg %></li>
+                                          <% end %>
+                                          </ul>
+                                        </div>
+                                      <% end %>
+                                      <div class="inputwrap_upload clearfix">
+                                        <%= label_tag(:title, "Video Name:") %>
+                                        <%= f.text_field :title, class: "form-control required" %>
+                                      </div>
+                                      
+                                      <div class="inputwrap_upload clearfix">
+                                        <%= label_tag(:catid, "Category:") %>
+                                        <%= select_tag :catid, options_from_collection_for_select(MusicCategory.all, :id, :name), { :multiple => true, :size =>10, :class => "form-control required" } %>
+                                      </div>
+                                      
+                                      <div class="inputwrap_upload clearfix">
+                                        <%= label_tag(:desc, "Describe Your Video:") %>
+                                        <%= f.text_area(:desc, class: "form-control") %>
+                                      </div>
+                                      
+                                      <input type="hidden" value="remote" name="video[source]">
+                                      <div class="inputwrap_upload source clearfix">
+                                        <%= label_tag(:source, "Source:") %>
+                                        <label class="option">Youtube</label>
+                                      </div>
+                                      <%if false%>
+                                        <div class="inputwrap_upload source clearfix">
+                                          <%= label_tag(:source, "Source:") %>
+                                          <label class="option"><%= radio_button_tag 'video[source]', 'local', true %>Local</label> <label class="option"><%= radio_button_tag 'video[source]', 'remote', false %>Youtube</label>
+                                        </div>
+                                        
+                                        <div id="local_video_path" class="inputwrap_upload clearfix">
+                                                  <%= label_tag(:path, "Upload Music File:") %>
+                                                  <%= f.file_field :path,{:class => "required"} %>
+                                        </div>
+                                        <div id="remote_video_path" style="display:none;" class="inputwrap_upload clearfix">
+                                                  <%= label_tag(:path, "Remote URL:") %>
+                                                  <%= f.text_field :remote_path,{:class => "form-control remote_source",:disabled => "disabled"} %>
+                                        </div>
+                                      <%end%>
+                                      <div id="remote_video_path" class="inputwrap_upload clearfix">
+                                                <%= label_tag(:path, "Remote URL:") %>
+                                                <%= f.text_field :remote_path,{:class => "form-control remote_source required url youtube"} %>
+                                      </div>
+                                      <input type="submit" value="Submit" class="submit btn">
+                                    <% end %>                                          
+                                </div>
+                                <div class="uploadvideoWrap">
+                                        <h3>My Uploaded Videos</h3>
+                                        <%
+                                        @videos.each do |video|                                        
+                                        %>
+                                          <div class="videobox"><%=getVideoThumb(video,"mqdefault",215,120,"user")%></div>
+                                        <% end %>
+                                </div>					
+                                <!-- upload video end -->
+                        </div>
+                </div> <!-- contentCol end -->
+                <%= render :partial => 'profile/index_right' %>
+        </div> <!-- rightPart end -->
+</div> <!-- rightpartWrap end -->
+<%@mobile_device_class=" mobile_device"%>
+<%= render :partial => 'profile/index_left' %>
+<script type="text/javascript">
+jQuery.validator.addMethod("youtube", function(value, element) {
+ var p = /^(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?(?=.*v=((\w|-){11}))(?:\S+)?$/;
+ //http://youtu.be/RM3i5oqn7EY 
+ var p2 = /^(?:https?:\/\/)?(?:www\.)?youtu\.be\/.*$/;
+ var testResult = (value.match(p)) ? RegExp.$1 : false;
+ if(!testResult)
+ {
+    testResult = (value.match(p2)) ? true : false; 
+ }
+ return testResult;
+}, "Enter correct youtube video URL. e.g. (http://www.youtube.com/watch?v=RM3i5oqn7EY)");
+
+jQuery(document).ready(function(){
+  jQuery('#new_video').validate({
+    errorClass: 'invalid'
+  });
+  jQuery('#video_source_local').click(function(){
+    jQuery('#remote_video_path').hide();
+    jQuery('.remote_source').attr("disabled","disabled").removeClass("required");
+    jQuery('#local_video_path').show();
+    jQuery('.local_source').removeAttr("disabled").addClass("required");
+    jQuery('.remote_source').next("label.invalid").remove();
+    jQuery('.local_source').next("label.invalid").remove();
+  });
+  jQuery('#video_source_remote').click(function(){
+    jQuery('#local_video_path').hide();
+    jQuery('.local_source').attr("disabled","disabled").removeClass("required");
+    jQuery('#remote_video_path').show();
+    jQuery('.remote_source').removeAttr("disabled").addClass("required");
+    jQuery('.remote_source').next("label.invalid").remove();
+    jQuery('.local_source').next("label.invalid").remove();
+  });
+});
+</script>

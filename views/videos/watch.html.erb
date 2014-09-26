@@ -1,0 +1,443 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | <%=@video.title%></title>
+<% end %>
+<% content_for :page_meta do %>
+ <meta name="keywords" content="<%=@pageMetaTitle%>" />
+ <%if !@pageMetaDescription.blank?%>
+  <meta name="description" content="<%=@pageMetaDescription%>" />
+ <%end%>
+  <meta property="og:site_name" content="ArtistNXT">
+  <meta property="og:url" content="<%=request.url%>">
+  <meta property="og:title" content="<%=@pageMetaTitle%>">
+  <meta property="og:type" content="video">
+  <%if @video.source.to_s == "remote" && (!@video.remote_path.index('www.youtube.com').nil? || !@video.remote_path.index('youtu.be').nil?)%>  
+  <meta property="og:image" content="<%=youtube_embed_thumb(@video.remote_path,thumbtype="hqdefault")%>">
+  <%else%>
+  <meta property="og:image" content="<%=@video.path_url(:large)%>">
+  <%end%>
+  
+  <meta property="og:description" content="<%=@pageMetaDescription%>">
+  <%if @video.source.to_s == "remote" && (!@video.remote_path.index('www.youtube.com').nil? || !@video.remote_path.index('youtu.be').nil?)%>            
+    <meta property="og:video" content="<%=@video.remote_path.gsub('http:', 'https:')%>">
+  <%else%>
+    <meta property="og:video" content="<%=root_url+@video.path.to_s%>">
+  <%end%>
+  <meta property="og:video:type" content="application/x-shockwave-flash">
+  <meta property="og:video:width" content="640">
+  <meta property="og:video:height" content="360">
+<% end %>
+<!-- artist page start -->
+
+	<div class="contentCol">
+		<div class="content">
+			<h2 class="logintitle2">Video Details</h2>
+			<div class="video-watch-leftpart col-sm-8 col-md-8">
+				<div class="videoWrap">
+					<div class="video-box">
+                    <div class="videoWrapper">
+                                          <%if @video.source.to_s == "remote" && (!@video.remote_path.index('www.youtube.com').nil? || !@video.remote_path.index('youtu.be').nil?)%>            
+                                            <%=youtube_embed(@video.remote_path,640,360).html_safe%>
+                                            <%else%>
+                                              <%=get_mediaelement_video_player(@video.path.to_s,@video.path_url(:webm).to_s,@video.path_url(:large).to_s,640,360).html_safe%>
+                                          <%end%>
+                                          </div>
+                                        </div>
+					<div class="video-details">
+						<div class="toppart">
+							<h3><%=@video.title.html_safe%></h3>
+							<div class="user-header clearfix">
+								<div class="author-info col-sm-6 col-md-6 clearfix">
+									<div class="image-box">
+                                                                          <%creator_user_name=@videoCreator.first_name+" "+@videoCreator.last_name
+                                                                            creatorProfileLink = artist_dashboard_path(id: @videoCreator.id.to_s+':'+creator_user_name.parameterize)
+                                                                          %>
+                                                                          <%= link_to image_tag(getUserAvatar(@videoCreator),:width => "48"), creatorProfileLink %>                                                                                
+                                                                        </div>
+									<div class="text-box">
+										<h4><%= link_to creator_user_name, creatorProfileLink %></h4>
+                                                                                <%creatorsTotalVideo = getUsersVideoCount(@videoCreator.id)
+                                                                                if creatorsTotalVideo > 1
+                                                                                %>
+                                                                                  <%= link_to number_with_precision(creatorsTotalVideo, precision: 0, separator: ',', delimiter: '')+" videos", creatorProfileLink, :class=>"user-video" %>
+                                                                                <%
+                                                                                else
+                                                                                %>
+                                                                                   <%= link_to number_with_precision(creatorsTotalVideo, precision: 0, separator: ',', delimiter: '')+" video", creatorProfileLink, :class=>"user-video" %>
+                                                                                <%
+                                                                                end
+                                                                                %>										
+									</div>
+								</div>
+								<div class="right-box col-sm-6 col-md-6 clearfix">
+									<div class="watch-view-count">Views: <%=number_with_precision(@video.hits.to_i, precision: 0, separator: ',', delimiter: '')%></div>
+									
+                                                                        
+								</div>
+							</div>
+                            <div class="tabWrapper col-sm-12 col-md-12 clearfix">
+                            
+                            <ul class="nav nav-tabs">
+                              <li class="active"><a href="#viedo_description" data-toggle="tab">About</a></li>
+                              <li><a href="#share_video" data-toggle="tab">Share</a></li>
+                              <li>
+                                <% if current_user != nil %>        
+                                  <% if @isFavoriteVideo == 0 %>
+                                    <%= link_to "Add to favorite", make_video_favorite_path(:id => @video.id,:user_id => current_user.id) %>        
+                                  <% else %>
+                                    <%= link_to "Remove Favorite", remove_video_favorite_path(:id => @video.id,:user_id => current_user.id) %>
+                                  <% end %>
+                                  
+                                <% else %>
+                                  <%= link_to "Please login to add Favorite video", new_user_session_path(:return_url=>Base64.encode64(request.url)) %>
+                                <% end %>                                                                            
+                              </li>
+                            </ul>
+                            
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                              <div class="tab-pane active" id="viedo_description"><p><%=@video.desc%></p></div>
+                              <div class="tab-pane" id="share_video">
+                                <%= social_share_button_tag(@video.title, :url => request.url) %>
+                                
+                                <select id="share_video_at" class="form-control" style="display:none;">
+                                  <option value="">Select Media</option>
+                                  <option value="facebook">Facebook</option>
+                                  <option value="twitter">Twitter</option>
+                                  <option value="googleplus">Google Plus</option>
+                                </select>
+                              </div>                                                                          
+                            </div>
+                                                                        
+                            </div>
+						</div>
+						<div class="commentWrap">
+                                                    <div class="comment-post-box clearfix">            
+                                                        <%
+                                                          @comments.each do |commentRow|
+                                                          commentBy = getUserByID(commentRow.user_id);
+                                                          
+                                                        %>
+                                                          <div class="comments-post clearfix">
+                                                              <div class="user-thumb">
+                                                                <%if !commentBy.nil? && commentBy.profile_photo.to_s!=""
+                                                                  user_name = commentBy.first_name.to_s+" "+commentBy.last_name.to_s
+                                                                %>
+                                                                  <% if commentBy.user_type.to_s=='artist' %>
+                                                                  <%= link_to image_tag(getUserAvatar(commentBy),:width => "58"), artist_dashboard_path(id: commentBy.id.to_s+':'+user_name.parameterize) %>
+                                                                  <% else %>
+                                                                  <%= link_to image_tag(getUserAvatar(commentBy),:width => "58"), fan_dashboard_path(id: commentBy.id.to_s+':'+user_name.parameterize) %>
+                                                                  <% end %>
+                                                                      
+                                                                <%
+                                                                else
+                                                                %>
+                                                                    <img src="/uploads/user/profile_photo/small_no-avatar.png" alt="no-images" />
+                                                                <%
+                                                                end                      
+                                                                %>
+                                                              </div>
+                                                              <div class="user-status">
+                                                                  <div class="user-name">
+                                                                    <%if !commentBy.nil?
+                                                                      user_name = commentBy.first_name.to_s+" "+commentBy.last_name.to_s
+                                                                    %>
+                                                                      <% if commentBy.user_type.to_s=='artist' %>
+                                                                      <%= link_to user_name, artist_dashboard_path(id: commentRow.user_id.to_s+':'+user_name.parameterize) %>
+                                                                      <% else %>
+                                                                      <%= link_to user_name, fan_dashboard_path(id: commentRow.user_id.to_s+':'+user_name.parameterize) %>
+                                                                      <% end %>
+                                                                    <%
+                                                                    else
+                                                                    %>
+                                                                      <%=commentRow.commented_by_name%>
+                                                                    <%
+                                                                    end
+                                                                    %>                        
+                                                                    <span data-livestamp="<%=commentRow.created_at.to_time.to_i%>"></span>
+                                                                  </div>
+                                                                  <div class="user-post"><%=commentRow.body.html_safe%></div>
+                                                              </div>
+                                                          </div>
+                                                        <%end%>
+                                                        <%= will_paginate @comments %>                                                                          
+                                                    </div>
+                                                    <%if current_user != nil%>
+                                                        <div class="comment-add-box clearfix">
+                                                          <h3>Add a comment</h3>
+                                                          <form id="commentForm" name="commentForm" action="<%=make_comment_path%>" method="post">
+                                                            <div class="comment-image-box">
+                                                              <% user_name = current_user.first_name.to_s+" "+current_user.last_name.to_s %>
+                                                              <% if current_user.user_type.to_s=='artist' %>
+                                                              <%= link_to image_tag(getUserAvatar(current_user),:width => "58"), artist_dashboard_path(id: current_user.id.to_s+':'+user_name.parameterize) %>
+                                                              <% else %>
+                                                              <%= link_to image_tag(getUserAvatar(current_user),:width => "58"), fan_dashboard_path(id: current_user.id.to_s+':'+user_name.parameterize) %>
+                                                              <% end %>
+                                                            </div>
+                                                            <div class="comment-text-box">
+                                                                    <span><textarea cols="80" name="comment[body]" id="body" placeholder="Share your comments" class="required" minlength="20"></textarea></span>
+                                                                    <input type="hidden" name="comment[video_id]" id="video_id" value="<%=@video.id%>"/>
+                                                                    <input type="submit" class="add-comment" value="Add comment" />  
+                                                            </div>
+                                                          </form>
+                                                          <script type="text/javascript">
+                                                          jQuery(document).ready(function(){
+                                                            jQuery('#commentForm').validate({
+                                                              errorClass:'Invalid',
+                                                              errorElement: 'div',
+                                                              messages:{
+                                                                "comment[body]":{
+                                                                  required:"Empty comment is not allowed",
+                                                                  minlength: "Minimum 20 characters are required"
+                                                                }
+                                                              }
+                                                            });
+                                                          });
+                                                          </script>
+                                                      </div>
+                                                    <%
+                                                    else
+                                                    %>
+                                                      <div class="comment-add-box clearfix">
+                                                          <h1><%= link_to 'Please login to make comment'.html_safe, new_user_session_path %> </h1>              
+                                                      </div>
+                                                    <%
+                                                    end%>  
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="video-watch-rightpart col-sm-4 col-md-4">
+                            <%if !@relatedVideos.nil? && @relatedVideos.length > 0%>
+                              <% @relatedVideos.each {|video|
+                                video_link = watch_video_path(:id => video.id.to_s+':'+video.title.parameterize)
+                                createdBy = getUserByID(video.user_id);
+                                user_name = ""
+                                if !createdBy.nil?
+                                  user_name = createdBy.first_name.to_s+" "+createdBy.last_name.to_s
+                                end 
+                              %>
+                                <div class="related-video clearfix">
+                                   <div class="video-thumb">
+                                     <%=getVideoThumb(video,"default",120,68)%> 
+                                   </div>
+                                   <div class="video-textbox">
+                                           <span class="video-title"><%=link_to video.title, video_link%></span>
+                                           <span class="watch-vrec">by <%= link_to user_name, artist_dashboard_path(id: createdBy.id.to_s+':'+user_name.parameterize) %></span>
+                                           <span class="view-count"><%=number_with_precision(video.hits.to_i, precision: 0, separator: ',', delimiter: '')%> view<%if video.hits.to_i > 1%>s<%end%></span>
+                                   </div> 
+                                </div>
+                              <%
+                              }%>
+                            <%end%>				
+			</div>
+		</div>
+	</div>
+<!-- artist page end -->
+<script type="text/javascript">
+  var video_link = "<%=request.url%>";
+  function newPosition(width, height) {
+
+      var position = {};
+
+      // parseInt incase we're dealing with strings
+      width = parseInt(width, 10) || 500;
+      height = parseInt(height, 10) || 500;
+
+      position.left = ( screen.width / 2 ) - ( width / 2 );
+      position.top = ( screen.height / 2 ) - ( height / 2 );
+
+      return position;
+
+  }
+  jQuery(document).ready(function(){
+    jQuery('#share_video_at').change(function(){
+      var share_media = jQuery(this).val();
+      if(share_media=="facebook")
+      {
+        url = 'https://www.facebook.com/sharer/sharer.php?u=';
+        url += encodeURIComponent( video_link );
+        width = 640;
+        height = 320;
+        pos = newPosition(width, height);
+
+        window.open(url, 'fbshare', 'width='+width+', height='+height+', top='+pos.top+', left='+pos.left+', menubar=no, status=no, toolbar=no, ');
+      }
+      else if(share_media=="twitter")
+      {
+        width = 550;
+        height = 450;
+        pos = newPosition(width, height);
+
+        url = 'https://twitter.com/share?url=' + encodeURIComponent( video_link ) +'&text=' + encodeURIComponent( "<%=@video.title%>" );
+
+        window.open(url, 'twshare', 'width='+width+', height='+height+', top='+pos.top+', left='+pos.left+', menubar=no, status=no, toolbar=no, ');
+      }
+      else if(share_media=="googleplus")
+      {
+         width = 600;
+         height = 540;
+         pos = newPosition(width, height);
+          
+         url = 'https://plus.google.com/share?url=' + encodeURIComponent( video_link );
+          
+         window.open(url, 'gpshare', 'width='+width+', height='+height+', top='+pos.top+', left='+pos.left+', menubar=no, status=no, toolbar=no, ');
+
+      }
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+<%if false%>
+<div class="logintitle2">Video Details</div>
+
+
+<div id="ddtags" class="ddtags-full-width">
+    <div class="ddtags-video">
+      <h1><%= @video.title %></h1>
+      
+      <div class="video-desc"><%= @video.desc %></div>
+      
+      <div class="ddtags-video-box">
+        <%if @video.source.to_s == "remote" && !@video.remote_path.index('www.youtube.com').nil?%>            
+          <%=youtube_embed(@video.remote_path,640,360).html_safe%>
+          <%else%>
+            <%=get_mediaelement_video_player(@video.path.to_s,@video.path_url(:webm).to_s,@video.path_url(:large).to_s,640,360).html_safe%>
+        <%end%>        
+      </div>
+      
+      <div class="ddtags-video-favorit">
+        <% if current_user != nil %>
+        
+          <% if @isFavoriteVideo == 0 %>
+            <%= link_to "Add to favorite", make_video_favorite_path(:id => @video.id,:user_id => current_user.id) %>        
+          <% else %>
+            <%= link_to "Remove Favorite", remove_video_favorite_path(:id => @video.id,:user_id => current_user.id) %>
+          <% end %>
+          
+        <% else %>
+          <%= link_to "Please login to add Favorite video", new_user_session_path %>
+        <% end %>
+        
+      </div>
+    </div>
+    <div class="ddtags-comments">
+        <div class="comment-post-box clearfix">            
+            <%
+              @comments.each do |commentRow|
+              commentBy = getUserByID(commentRow.user_id);
+              
+            %>
+              <div class="comments-post clearfix">
+                  <div class="user-thumb">
+                    <%if !commentBy.nil? && commentBy.profile_photo.to_s!=""
+                      user_name = commentBy.first_name.to_s+" "+commentBy.last_name.to_s
+                    %>
+                      <% if commentBy.user_type.to_s=='artist' %>
+                      <%= link_to image_tag(getUserAvatar(commentBy),:width => "58"), artist_dashboard_path(id: commentBy.id.to_s+':'+user_name.parameterize) %>
+                      <% else %>
+                      <%= link_to image_tag(getUserAvatar(commentBy),:width => "58"), fan_dashboard_path(id: commentBy.id.to_s+':'+user_name.parameterize) %>
+                      <% end %>
+                          
+                    <%
+                    else
+                    %>
+                        <img src="/uploads/user/profile_photo/small_no-avatar.png" alt="no-images" />
+                    <%
+                    end                      
+                    %>
+                  </div>
+                  <div class="user-status">
+                      <div class="user-name">
+                        <%if !commentBy.nil?
+                          user_name = commentBy.first_name.to_s+" "+commentBy.last_name.to_s
+                        %>
+                          <% if commentBy.user_type.to_s=='artist' %>
+                          <%= link_to user_name, artist_dashboard_path(id: commentRow.user_id.to_s+':'+user_name.parameterize) %>
+                          <% else %>
+                          <%= link_to user_name, fan_dashboard_path(id: commentRow.user_id.to_s+':'+user_name.parameterize) %>
+                          <% end %>
+                        <%
+                        else
+                        %>
+                          <%=commentRow.commented_by_name%>
+                        <%
+                        end
+                        %>                        
+                        <span data-livestamp="<%=commentRow.created_at.to_time.to_i%>"></span>
+                      </div>
+                      <div class="user-post"><%=commentRow.body.html_safe%></div>
+                  </div>
+              </div>
+            <%end%>
+            <%= will_paginate @comments %>
+                              
+        </div>
+        <div class="clearfix"></div>
+        <%if current_user != nil%>
+            <div class="comment-add-box clearfix">
+              <h1>Add a comment</h1>
+              <form id="commentForm" name="commentForm" action="<%=make_comment_path%>" method="post">
+                <div class="comment-add clearfix">
+                    <div class="user-thumb">                      
+                      
+                      <% user_name = current_user.first_name.to_s+" "+current_user.last_name.to_s %>
+                      <% if current_user.user_type.to_s=='artist' %>
+                      <%= link_to image_tag(getUserAvatar(current_user),:width => "58"), artist_dashboard_path(id: current_user.id.to_s+':'+user_name.parameterize) %>
+                      <% else %>
+                      <%= link_to image_tag(getUserAvatar(current_user),:width => "58"), fan_dashboard_path(id: current_user.id.to_s+':'+user_name.parameterize) %>
+                      <% end %>
+                      
+                    </div>
+                    <div class="add-status">
+                        <div class="textareabox">
+                            <div class="arrow">&nbsp;</div>
+                            <textarea cols="80" name="comment[body]" id="body" placeholder="Share your comments" class="required" minlength="20"></textarea>
+                            <input type="hidden" name="comment[video_id]" id="video_id" value="<%=@video.id%>"/>
+                        </div>
+                        <input type="submit" class="button" value="Add comment" />
+                    </div>
+                </div>
+              </form>
+              <script type="text/javascript">
+              jQuery(document).ready(function(){
+                jQuery('#commentForm').validate({
+                  errorClass:'Invalid',
+                  errorElement: 'div',
+                  messages:{
+                    "comment[body]":{
+                      required:"Empty comment is not allowed",
+                      minlength: "Minimum 20 characters are required"
+                    }
+                  }
+                });
+              });
+              </script>
+          </div>
+        <%
+        else
+        %>
+          <div class="comment-add-box clearfix">
+              <h1><%= link_to 'Please login to make comment'.html_safe, new_user_session_path %> </h1>              
+          </div>
+        <%
+        end%>        
+    </div>
+</div>
+
+<%if !@relatedVideos.nil? && @relatedVideos.length > 0%>
+  <% @relatedVideos.each {|video|
+  %>
+     <div class="video-box">
+       <%=getVideoThumb(video,"mqdefault",215,120)%> 
+     </div>
+  <%
+  }%>
+<%end%>
+<%end%>

@@ -1,0 +1,104 @@
+<div class="headerOuter">
+    <div class="container header">
+        <div class="logo"><%= link_to image_tag('/assets/logo.png', :class => "img-responsive"), url_for(root_path) %></div>
+        <div class="mainmenu clearfix">
+            <ul>                                           
+                <li><%= link_to 'Home'.html_safe, root_path %></li>
+                <li><%= link_to 'Genres'.html_safe, genres_path %></li>
+                
+                <% top_contents = Content.where('position = ? AND published = 1', 'top').all %>
+		<% if top_contents.size > 0 %>
+                    <% top_contents.each_with_index do |top_content, index| %>
+                <li><%= link_to top_content.title.html_safe, content_page_path(alias: top_content.alias.html_safe) %></li>
+                    <% end %>
+                <% end %>
+            </ul>
+        </div> 	
+        <div class="mobile_menu">
+            <div class="wrapper-demo">
+                <div id="dd" class="wrapper-dropdown-5">Menu
+                    <ul class="dropdown">
+                        <li><%= link_to 'Home'.html_safe, root_path %></li>
+                        <li><%= link_to 'Genres'.html_safe, genres_path %></li>
+                        
+                        <% top_contents = Content.where('position = ? AND published = 1', 'top').all %>
+                        <% if top_contents.size > 0 %>
+                            <% top_contents.each_with_index do |top_content, index| %>
+                        <li><%= link_to top_content.title.html_safe, content_page_path(alias: top_content.alias.html_safe) %></li>
+                            <% end %>
+                        <% end %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="moduletable-sign clearfix">
+          <ul>
+            <% if user_signed_in? %>
+      
+                <% if current_user.role=="administrator" %>
+                
+                <li><%= link_to "ADMIN DASHBOARD".html_safe, admin_dashboard_path %></li>
+                <li><%= link_to "LOG OUT", destroy_user_session_path, :method => :delete %></li>
+                
+                <% else %>
+                    <%if current_user.user_type.to_s.eql?("fan")
+                        fan_username = current_user.first_name + " " + current_user.last_name
+                        profileLink = fan_dashboard_path(id: current_user.id.to_s+':'+fan_username.parameterize)
+                    %>
+                      <li><%= link_to "HELLO #{fan_username}".html_safe, profileLink %></li>
+                    <%else%>
+                      <li><%= link_to "HELLO #{current_user.first_name.to_s+' '+current_user.last_name.to_s}".html_safe, profile_index_path %></li>
+                    <%end%>
+                    <li><%= link_to "LOG OUT", destroy_user_session_path, :method => :delete %></li>
+                
+                <% end %>
+              
+            <% else %>
+                
+                <li><%= link_to 'Sign Up'.html_safe, signup_path %></li>
+                <li><%= link_to 'Log In'.html_safe, new_user_session_path %></li>
+                
+            <% end %>
+          </ul>
+            
+        </div>
+        <div class="moduletable-social hidden-xs clearfix">
+                <h5>Connect With Us</h5>
+                <ul>
+                    <li><%= link_to image_tag('/assets/icon1.png'), user_omniauth_authorize_path(:facebook, :display=>"page") %></li>
+                    <li><%= link_to image_tag('/assets/icon2.png'), user_omniauth_authorize_path(:twitter) %></li>
+                    <li><%= link_to image_tag('/assets/icon3.png'), user_omniauth_authorize_path(:google_oauth2) %></li>
+                </ul>
+        </div>
+        <div class="moduletable-search">
+            <form name="topSearchForm" id="topSearchForm" action="<%=genres_path%>" method="get" onsubmit="return (jQuery.trim(jQuery('#top_search_box').val()) != '');">
+                <%=text_field_tag 'search', nil, id: 'top_search_box',class:"inputbox" , value: @search%>
+                <input type="submit" class="btn" value="Search" />
+            </form>
+        </div>
+    </div> 
+</div>
+
+
+<script type="text/javascript">
+function DropDown(el) {
+        this.dd = el;
+        this.initEvents();
+}
+DropDown.prototype = {
+        initEvents : function() {
+                var obj = this;
+                obj.dd.on('click', function(event){
+                        jQuery(this).toggleClass('active');
+                        event.stopPropagation();
+                });	
+        }
+}
+jQuery(function() {
+        var dd = new DropDown( jQuery('#dd') );
+        jQuery(document).click(function() {
+                // all dropdowns
+                jQuery('.wrapper-dropdown-5').removeClass('active');
+        });
+});
+</script>

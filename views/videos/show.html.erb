@@ -1,0 +1,47 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Video Details</title>
+<% end %>
+
+<div class="contenttitle_area">
+        <h2 class="logintitle2">Video details</h2>
+</div>
+<%@mobile_device_class=""%>
+<%= render :partial => 'profile/index_left' %>
+<div class="rightpartWrap col-md-10"> <!-- rightpartWrap start -->
+        <div class="rightPart clearfix"> <!-- rightPart start -->
+                <div class="contentCol col-md-9"> <!-- contentCol start -->
+                        <div class="content">
+                            <div id="ddtags">
+  
+                              <dl>
+                                <dt style="width:100%;"><h1 class="video_title"><%=@video.title%></h1></dt>
+                              </dl>
+                              
+                              <dl>
+                                <dd style="width:100%;"><%=@video.desc%></dd>
+                              </dl>
+                              
+                              <dl>
+                                <dd style="text-align:center;width:100%;">
+                                  <div class="videoWrapper">
+                                    <%if @video.source.to_s == "remote" && (!@video.remote_path.index('www.youtube.com').nil? || !@video.remote_path.index('youtu.be').nil?)%>            
+                                        <%=youtube_embed(@video.remote_path,640,360).html_safe%>
+                                        <%else%>
+                                          <%=get_mediaelement_video_player(@video.path.to_s,@video.path_url(:webm).to_s,@video.path_url(:large).to_s,640,360).html_safe%>
+                                    <%end%>
+                                  </div>
+                                </dd>
+                              </dl>
+                              
+                              <dl>
+                                <dt><%= link_to 'Delete', user_video_path(@user, @video), method: :delete, data: { confirm: 'Are you sure?' } %> | <%= link_to 'Back', user_videos_path %></dt>
+                              </dl>
+                            
+                            </div>    
+                        </div>
+                </div> <!-- contentCol end -->
+                <%= render :partial => 'profile/index_right' %>
+        </div> <!-- rightPart end -->
+</div> <!-- rightpartWrap end -->
+<%@mobile_device_class=" mobile_device"%>
+<%= render :partial => 'profile/index_left' %>

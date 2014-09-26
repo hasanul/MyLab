@@ -1,0 +1,33 @@
+<%= form_for(@music_category, url: {action: @form_action}) do |f| %>
+  <% if @music_category.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@music_category.errors.count, "error") %> prohibited this music_category from being saved:</h2>
+
+      <ul>
+      <% @music_category.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <dl>
+  <dt><%= f.label :name %>:</dt>
+  <dd><%= f.text_field :name, class: "login_inp required" %></dd>
+  </dl>
+  
+  <dl>
+  <dt><%= f.label :desc %>:</dt>
+  <dd><%= f.text_area :desc, class: "login_inp1" %></dd>
+  </dl>
+  
+  <dl>
+  <dt><%= f.label :show_at_home_page %></dt>
+  <dd><%= f.check_box :show_at_home_page %></dd>
+  </dl>
+  
+  <dl>
+  <dt>&nbsp;</dt>
+  <dd><%= f.submit "Submit", class: "login"  %></dd>
+  </dl>
+<% end %>

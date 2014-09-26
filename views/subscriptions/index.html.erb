@@ -1,0 +1,109 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Subscriptions Manager</title>
+<% end %>
+
+<div class="profiletitle">Subscriptions Manager</div>
+<div class="clr">&nbsp;</div>
+
+<div class="searchWrap">
+	<div class="searchbox">
+                <form id="searchForm" name="searchForm" action="" method="get">
+                  <div class="searchboxinner">
+                    <input type="text" name="search" class="textbox1" value="<%=h(@search)%>"/>
+		    <%=select_tag "status", options_for_select([ "Active", "Pending" ], @status),{:prompt=>"Select Status"}%>
+		    <%= select_tag :plan, options_from_collection_for_select(Plan.all, :id, :name,:selected => params[:plan]), {:prompt=>"Select Plan" } %>
+		    <%=text_field_tag 'expiration_date_start', params[:expiration_date_start], placeholder: "Expire start", class:"datepicker"%> 
+			<div class="to">to </div>
+		    <%=text_field_tag 'expiration_date_end', params[:expiration_date_end], placeholder: "Expire end", class:"datepicker"%>
+                    <div class="buttonwrap"><input type="submit" value="Search" class="btn"/>
+                    <input style="margin-left:4px;" type="button" class="btn" value="Reset" onclick="clearSearchForm();document.searchForm.submit();"></div>
+                  </div>
+                </form>		
+	</div>	
+	<div class="clr">&nbsp;</div>
+</div>
+<div class="tableWrap">
+  <form id="dataFormItem" name="dataFormItem" action="" method="post">
+  <div class="table-responsive">
+    <table class="table">
+           <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Name</th>
+                    <th>Created Date</th>
+		    <th>Method</th>
+                    <th>Plan</th>		    
+                    <th>Expired at</th>                    
+                    <th style="width: 125px;">Status</th>   
+                  </tr>
+           </thead>
+           <tbody>
+                  <%
+                    itemNo = 0
+                    if params[:page].to_i > 1
+		      itemNo = (params[:page].to_i - 1)*10
+                    end
+                    @subscriptions.each do |subscription|
+                    itemNo = itemNo + 1
+                    subscribedUser = getUserByID(subscription.userid)
+                    plan = getPlanById(subscription.plan)
+                    subscribedUserName = "-"
+                    if subscribedUser!=nil
+		      subscribedUserName = subscribedUser.first_name+" "+subscribedUser.last_name
+                    end
+                  %>
+                    <tr>
+                      <td><%=itemNo%></td>
+                      <td>
+			<%= link_to subscribedUserName, subscription %>                        
+                      </td>
+                      <td><%=subscription.created_at.to_time.utc.strftime('%Y-%m-%d')%></td>
+		      <td><%=subscription.subscr_method%></td>
+                      <td>
+			<%if plan!=nil
+			%>
+			  <%=plan.name%>
+			<%end%>
+		      </td>
+		      
+                      <td>
+			<% if subscription.lifetime%>
+			  Lifetime
+			<%
+			elsif subscription.status == "Active" && subscription.expiration != nil 
+			%>
+			  <%=subscription.expiration.to_time.utc.strftime('%Y-%m-%d')%>
+			<%end%>
+                      </td>
+			
+                      <td>
+                        <%=subscription.status%>
+                      </td>
+                      
+                    </tr>
+                  <% end %>                  
+           </tbody>
+    </table>
+    </div>
+    <%= will_paginate @subscriptions, :params=>{:search=>h(@search)} %>
+  </form>
+</div>
+
+<script type="text/javascript">
+  jQuery( document ).ready(function() {
+    jQuery( ".datepicker" ).datepicker({
+      dateFormat: "yy-mm-dd",
+      buttonImage: "/assets/calendar.gif",
+      buttonImageOnly: true,
+      //minDate:'0d+',
+      showOn: "both"
+    });
+  });
+  function clearSearchForm(){
+    document.searchForm.search.value='';
+    document.searchForm.status.value='';
+    document.searchForm.plan.value='';
+    document.searchForm.expiration_date_start.value='';
+    document.searchForm.expiration_date_end.value='';
+  }
+</script>

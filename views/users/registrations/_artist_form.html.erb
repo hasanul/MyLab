@@ -1,0 +1,297 @@
+<div class="registercenter">
+   <div class="steps">
+	   <ul>
+		   <li data-stepcheck="0" class="active"><span>1</span>   General Info</li>
+		   <li data-stepcheck="1"><span>2</span> Music Info </li>
+		   <li data-stepcheck="2"><span>3</span>  Upload Your Music </li>
+		   <li data-stepcheck="3"><span>4</span>  Preview Page </li>
+		   <li><span>5</span>  Confirmation</li>			
+	   </ul>
+   </div>
+   
+   <!-- step 1 start -->
+   <div id="step1">
+   <div class="col-md-6 stepone_left">
+      <div class="inputwrap_step clearfix">
+	    <label id="acc_type">Choose Account Type:</label>
+	    <%= f.collection_select(:plan_id, Plan.where('published = 1'), :id, :name, {:prompt => "Please Select Your Option"}, {:class => "form-control required"}) %>
+      </div>
+      <div class="inputwrap_step clearfix">
+	      <label id="first_name">First Name:</label>
+	      <%= f.text_field :first_name, class: "form-control required" %>
+      </div>
+      <div class="inputwrap_step clearfix">
+	      <label id="last_name">Last Name:</label>
+	      <%= f.text_field :last_name, class: "form-control required" %>
+      </div>
+      <div class="inputwrap_step clearfix">
+	      <label id="email_add">Email Address:</label>
+	      <%= f.email_field :email, class: "form-control required email", remote: "/application/check_email" %>
+      </div>
+      <div class="inputwrap_step clearfix">
+	      <label id="phone_no">Phone No:</label>
+	      <%= f.telephone_field(:phone, class: "form-control required") %>
+      </div>
+      <div class="inputwrap_step clearfix">
+	      <label id="phone_no">Country:</label>
+	      <%= f.collection_select(:country_id, Country.all, :id, :country_name, {:prompt => "Please Select Your Country"}, {:class => "form-control required"}) %>
+      </div>
+      <div class="inputwrap_step state clearfix countryDependent">
+	      <label id="phone_no">State:</label>
+	      <div id="country_states_wrapper">
+	      <%= render partial: 'countries/state_select', locals: {:country_id => '', :f => f} %>
+	      </div>
+      </div>
+      <div class="inputwrap_step clearfix">
+	      <label id="phone_no">City:</label>
+	      <%= f.text_field(:city, class: "form-control required") %>
+      </div>
+      <div class="inputwrap_step clearfix">
+	      <label id="phone_no">Zip Code:</label>
+	      <%= f.text_field :zip, class: "form-control required", autocomplete: "off" %>
+      </div>
+      <div class="inputwrap_step clearfix">
+	      <label id="password">Choose Password:</label>
+	      <%= f.password_field :password, class: "form-control required", minLength: "6", autocomplete: "off" %>
+      </div>
+      <div class="inputwrap_step clearfix">
+	      <label id="re_password">Retype Password:</label>
+	      <%= f.password_field :password_confirmation, class: "form-control", equalTo: "#user_password", minLength: "6" %>
+      </div>
+      <input name="step2_trigger" id="step2_trigger" type="button" value="Next Step" class="submit btn" />
+   </div>
+   
+   <div class="col-md-6 stepone_right">
+      
+      <% plans = Plan.where('published = 1') %>
+      <% if plans.count > 0 %>
+	 <ul>
+	    <% plans.each do |plan| %>
+	       <li><strong><%=plan.name%></strong></li>
+	       <li><%=plan.desc%></li>
+	    <% end %>
+	 </ul>
+      <% end %>
+      
+   </div>
+   </div>
+   <!-- step 1 end -->
+   
+   <!-- step 2 start -->
+   <div id="step2">
+   <div class="col-md-6 stepone_left">
+	   <div class="inputwrap_step clearfix">
+		   <label id="music_info">Music Info:</label>
+		   <%= f.text_field :music_info, class: "form-control required" %>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="cat">Category:</label>
+		   <%= f.collection_select(:music_catid, MusicCategory.all, :id, :name, {:prompt => "Please Select Category"}, {:class => "form-control required"}) %>
+	   </div>
+	   <div class="inputwrap_step textarea clearfix">
+		   <label id="des_music">Describe your music:</label>
+		   <%= f.text_area(:music_desc, class: "form-control") %>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		  <label id="label">Label:</label>
+		  Yes&nbsp;<%= f.radio_button :music_label, '1', :checked => true %>
+		  &nbsp;No&nbsp;<%= f.radio_button :music_label, '0' %>
+	   </div>
+	   <div class="inputwrap_step upload clearfix">
+		   <label id="photo">Upload Profile Photo:</label>
+		   <div id="queue"></div>
+		  <input id="photo_upload" name="photo_upload" type="file" >
+		  <%= f.hidden_field :profile_photo %>
+		  
+		  <div id="uploadedPhotoPrevDiv" style="display:none;">
+		     <div id="photo_preview" style="text-align:center;"></div>
+		     <input type="hidden" name="crop_x1" id="x1" value="0" />
+		     <input type="hidden" name="crop_y1" id="y1" value="0" />
+		     <input type="hidden" name="crop_x2" id="x2" value="215" />
+		     <input type="hidden" name="crop_y2" id="y2" value="215" />
+		     <input type="hidden" name="crop_w" id="w" value="215" />
+		     <input type="hidden" name="crop_h" id="h" value="215" />
+		  </div>
+	   </div>
+	   <input name="step3_trigger" id="step3_trigger" type="button" value="Next Step" class="submit btn" />
+   </div>
+   </div>
+   <!-- step 2 end -->
+   
+   <!-- step 3 start -->
+   <div id="step3">
+   <div class="col-md-6 stepone_left">	   
+	   <div class="inputwrap_step clearfix">
+		   <label id="music_info">Youtube Url:</label>
+		   <%= f.url_field(:music_source_youtube, class: "form-control") %>
+	   </div>
+	   <input name="step4_trigger" id="step4_trigger" type="button" value="Next Step" class="submit btn" />
+   </div>
+   </div>
+   <!-- step 3 end -->
+   
+   <!-- step 4 start -->
+   <div id="step4">
+   <div class="col-md-6 stepone_left">
+	   <div class="inputwrap_step clearfix">
+		   <label id="acc_type2">Choose Account Type:</label>
+		   <span id="preview_plan" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="first_name2">First Name:</label>
+		   <span id="preview_fname" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="last_name2">Last Name:</label>
+		   <span id="preview_lname" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="email_add2">Email Address:</label>
+		   <span id="preview_email" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="phone_no2">Phone No:</label>
+		   <span id="preview_phone" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="phone_no2">Country:</label>
+		   <span id="preview_country" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="phone_no2">State:</label>
+		   <span id="preview_state" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="phone_no2">City:</label>
+		   <span id="preview_city" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="phone_no2">Zip Code:</label>
+		   <span id="preview_zip" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step clearfix">
+		   <label id="label2">Label:</label>
+		   <span id="preview_label" class="preview_data"></span>
+	   </div>
+	   <div class="inputwrap_step uploaded clearfix">
+		   <label id="uploaded_music">Uploaded music:</label>
+		   <div class="audio clearfix">
+		     <span><%= image_tag('/assets/audio.png') %></span>
+		     <span><a href="javascript:void(0);" onclick="jQuery('div.steps li').eq(2).trigger('click');">Remove and add new</a></span>
+		   </div>
+	   </div>
+	   <div class="inputwrap_step uploaded clearfix">
+		   <label id="profile_pic">Profile Pic:</label>
+		   <div class="audio clearfix">
+		     <span id="final_photo_preview"></span>
+		     <span><a href="javascript:void(0);" onclick="jQuery('div.steps li').eq(1).trigger('click');">Remove and add new</a></span>
+		   </div>
+	   </div>
+	   <%= f.submit "Submit", class: "submit btn login" %>
+   </div>
+   </div>
+   <!-- step 4 end -->
+   
+</div>
+
+
+<style type="text/css">
+.preview_data {
+   font-weight:bold;
+}
+.uploadify-button {
+   background-color: #B61C1C;
+   border: none;
+   padding: 0;
+}
+.uploadify:hover .uploadify-button {
+   background-color: #B61C1C;
+}
+</style>
+
+
+<script type="text/javascript">
+jQuery(function() {
+      jQuery('#photo_upload').uploadify({
+	 'debug'    : false,
+	 'fileSizeLimit' : '2MB',
+	 'fileTypeDesc' : 'Image Files',
+	 'fileTypeExts' : '*.gif; *.jpg; *.png', 
+	 'multi'    : false,
+	 'width'    : 100,
+	 'method'   : 'post',
+	 'fileObjName' : 'photo_upload',
+	 'formData'     : {
+		 'timestamp' : (new Date()).getTime(),
+		 'token'     : (new Date()).getTime(),
+		 'authenticity_token' : '<%= form_authenticity_token %>'
+	 },
+	 'swf'      : '<%= asset_path "uploadify/uploadify.swf" %>',
+	 'uploader' : '/application/upload_photo',
+	 'onSelect' : function(file) {
+	    jQuery('#photo_preview').html('').hide();
+	    jQuery('#final_photo_preview').html('').hide();
+	    jQuery('#user_profile_photo').val('');
+	    jQuery("#uploadedPhotoPrevDiv").hide();
+	 },
+	 'onUploadSuccess' : function(file, data, response) {
+	    setTimeout(function() {
+	       jsonData = JSON.parse(data);	    
+	       file.name = jsonData.files[0].name;
+	       jQuery('#photo_preview').show().html('<img src="/uploads/tmp/'+file.name+'?d='+ (new Date()).getTime()+'" id="crop_target" />');
+	       jQuery('#final_photo_preview').show().html('<img src="/uploads/tmp/'+file.name+'?d='+ (new Date()).getTime()+'" id="crop_target" width="100px" />');
+	       jQuery('#user_profile_photo').val(jsonData.files[0].name);
+	       jQuery("#uploadedPhotoPrevDiv").show();
+	       init_crop();
+	    }, 3500);
+	 },
+	 'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+	    alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
+	 },
+	 'onUploadComplete' : function(file) {
+	    
+	    /*jQuery('#photo_preview').show().html('<img src="/uploads/tmp/'+file.name+'?d='+ (new Date()).getTime()+'" id="crop_target" width="100px" />');
+	    jQuery('#final_photo_preview').show().html('<img src="/uploads/tmp/'+file.name+'?d='+ (new Date()).getTime()+'" id="crop_target" width="100px" />');
+	    jQuery('#user_profile_photo').val(file.name);*/
+	 }
+      });
+});
+
+jQuery(document).ready(function(){
+  jQuery('select#user_country_id').change(function(){
+    var country_id = jQuery(this).val();
+    if(country_id == 223)//us
+    {
+      jQuery('.countryDependent').show();      
+      select_wrapper = jQuery('#country_states_wrapper');
+      jQuery('select', select_wrapper).attr('disabled', true);
+      url = "/countries/get_states?country_id="+country_id;
+      select_wrapper.load(url);  
+    }
+    else//hide state and zip
+    {
+      jQuery('.countryDependent').hide();      
+      if(jQuery('#user_state_id').length > 0)
+	 jQuery('#user_state_id').val('')
+    }
+  });
+  jQuery('select#user_country_id').change();
+})
+
+function init_crop(){
+   jQuery('#crop_target').Jcrop({
+      setSelect: [ 0, 0, 215, 215 ],
+      allowResize: true,
+      minSize: [ 215, 215 ],
+      aspectRatio: 1 / 1,
+      onChange: function(c){
+	 jQuery('#x1').val(c.x);
+	 jQuery('#y1').val(c.y);
+	 jQuery('#x2').val(c.x2);
+	 jQuery('#y2').val(c.y2);
+	 jQuery('#w').val(c.w);
+	 jQuery('#h').val(c.h);
+      }
+   });
+}
+</script>

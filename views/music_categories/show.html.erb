@@ -1,0 +1,42 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Music Category</title>
+<% end %>
+
+<div class="profiletitle">Music Category</div>
+<div class="clr">&nbsp;</div>
+
+<div id="ddtags">
+
+  <dl>
+    <dt><strong>Name</strong>:</dt>
+    <dd><%= @music_category.name %></dd>
+  </dl>
+  
+  <dl>			
+    <dt>Description</dt>
+    <dd><%= @music_category.desc %></dd>
+  </dl>
+  
+  <dl>			
+    <dt>At home page</dt>
+    <dd>
+      <%if (@music_category.show_at_home_page)
+      %>
+        Yes
+      <%
+      else
+      %>
+        No
+      <%
+      end      
+      %>
+    </dd>
+  </dl>
+  
+  
+  <dl>			
+    <dt><%= link_to 'Edit', edit_music_category_path(@music_category) %></dt>
+    <dd><%= link_to 'Back', music_categories_path %></dd>
+  </dl>
+
+</div>

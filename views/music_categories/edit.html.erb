@@ -1,0 +1,17 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Editing Music Category</title>
+<% end %>
+
+<div class="profiletitle">Editing Music Category</div>
+<div class="clr">&nbsp;</div>
+
+<div id="ddtags">
+  
+  <%= render 'form' %>
+  
+  <dl>			
+    <dt><%= link_to 'Show', @music_category %></dt>
+    <dd><%= link_to 'Back', music_categories_path %></dd>
+  </dl>
+  
+</div>

@@ -1,0 +1,46 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Edit My Profile</title>
+<% end %>
+
+<div class="contenttitle_area">
+        <h2 class="logintitle2">Edit My Profile</h2>
+</div>
+<%@mobile_device_class=""%>
+<%= render :partial => 'profile/index_left' %>
+
+<div class="rightpartWrap col-md-10"> <!-- rightpartWrap start -->
+    <div class="rightPart clearfix"> <!-- rightPart start -->
+        <div class="contentCol col-md-9"> <!-- contentCol start -->
+            <div class="content">
+                <!-- edit profile start -->
+                <div class="editprofileWrap">
+                    <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
+                      <%= devise_error_messages! %>
+                      
+                      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+                        <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+                      <% end %>
+                      
+                      <%= f.hidden_field :user_type, :value => resource.user_type %>
+                      
+                      <% if resource.user_type == 'artist' %>
+                        <%= render :partial => 'artist_edit_form', :locals => { :f => f } %>
+                      <% else %>
+                        <%= render :partial => 'fan_edit_form', :locals => { :f => f } %>
+                      <% end %>
+                    
+                    <% end %>
+                    
+                    <!--h3>Cancel my account</h3>
+                    <div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), :data => { :confirm => "Are you sure?" }, :method => :delete, class: "submit btn"  %></div>
+                    <span><%= link_to "Back", :back,:style => "color: #FF0000;" %></span-->
+                </div>
+                <!-- edit profile end -->
+            </div>
+        </div> <!-- contentCol end -->
+        <%= render :partial => 'profile/index_right' %>
+    </div> <!-- rightPart end -->
+</div> <!-- rightpartWrap end -->
+
+<%@mobile_device_class=" mobile_device"%>
+<%= render :partial => 'profile/index_left' %>

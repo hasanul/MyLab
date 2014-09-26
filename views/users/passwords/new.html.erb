@@ -1,0 +1,24 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Forgot Password</title>
+<% end %>
+
+<div class="contentCol">
+    <div class="content">
+        <!-- forgot pass start -->
+        <h2 class="logintitle2">Forgot Password</h2>
+        
+        <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
+
+        <%= devise_error_messages! %>
+        <div class="forgot_passWrap">
+                <p>Please Provide your valid Email address</p>
+                <div class="inputwrap_forgotpass clearfix">
+                        <label id="email_add" name="email_add">Email Address:</label>
+                        <%= f.email_field :email, :autofocus => true, :class => 'form-control' %>
+                </div>
+                <%= f.submit "submit", :class => 'submit btn' %>
+        </div>
+        <% end %>
+        <!-- forgot pass end -->
+    </div>	
+</div>

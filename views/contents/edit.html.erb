@@ -1,0 +1,17 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Editing content</title>
+<% end %>
+
+<div class="profiletitle">Editing content</div>
+<div class="clr">&nbsp;</div>
+
+<div id="ddtags" class="ddtags-full-width">
+  
+  <%= render 'form' %>
+  
+  <dl>			
+    <dt><%= link_to 'Show', @content %></dt>
+    <dd><%= link_to 'Back', contents_path %></dd>
+  </dl>
+  
+</div>

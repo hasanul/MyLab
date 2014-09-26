@@ -1,0 +1,31 @@
+<div class="footer-outerWrap">
+	<div class="container footerWrap">
+		<div class="footer-menu clearfix">
+			<% footer_contents = Content.where('position = ? AND published = 1', 'footer').all %>
+			
+			<% if footer_contents.size > 0 %>
+			<ul>
+				<% footer_contents.each_with_index do |footer_content, index| %>
+				
+				<% additional_class = (index==0) ? 'first' : '' %>
+				<li class="<%=additional_class%>"><%= link_to footer_content.title.html_safe, content_page_path(alias: footer_content.alias.html_safe) %></li>
+				<% end %>
+			</ul>
+			<% end %>
+		</div>
+		<div class="footer-bottom">
+			<div class="moduletable footerleft col-md-6">
+				Copyright 2013 Artist NXT. All Rights Reserved<br>
+				Email: <a href="mailto:info@ArtistNXT.com">info@ArtistNXT.com</a>&nbsp;&nbsp;|&nbsp;&nbsp;Developed by: <a href="http://www.evatix.com" target="_blank">Evatix</a>
+			</div>
+			<div class="moduletable footerright col-md-6">
+				<ul>
+					<li>Connect With Us </li>
+					<li><%= link_to image_tag('/assets/icon1.png'), user_omniauth_authorize_path(:facebook, :display=>"page") %></li>
+					<li><%= link_to image_tag('/assets/icon2.png'), user_omniauth_authorize_path(:twitter) %></li>
+					<li><%= link_to image_tag('/assets/icon3.png'), user_omniauth_authorize_path(:google_oauth2) %></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

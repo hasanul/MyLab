@@ -1,0 +1,55 @@
+<div class="uploadimageWrap">
+      <%= form_for([@user, @audio]) do |f| %>  
+      <% if @audio.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@audio.errors.count, "error") %> prohibited this audio from being saved:</h2>
+    
+          <ul>
+          <% @audio.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <div class="inputwrap_upload clearfix">
+              <%= label_tag(:title, "Title:") %>
+              <%= f.text_field :title, class: "form-control required" %>
+      </div>
+      
+      <div class="inputwrap_upload clearfix">
+              <%= label_tag(:category, "Category:") %>
+              <%= select_tag :catid, options_from_collection_for_select(MusicCategory.all, :id, :name), { :multiple => true, :size =>10, :class => "form-control required" } %>
+      </div>
+      
+      <div class="inputwrap_upload clearfix">
+              <%= label_tag(:desc, "Describe Your Music:") %>
+              <%= f.text_area(:desc, class: "form-control") %>
+      </div>
+      
+      <div class="inputwrap_upload clearfix">
+              <%= label_tag(:path, "Upload Music File:") %>
+              <%= f.file_field :path,{:class => "required"} %>
+      </div>
+      
+      <div class="inputwrap_upload clearfix">
+              <%= label_tag(:price, "Price") %>
+              <%= f.text_field :price, class: "form-control number",min:0 %>
+              <div class="empty_text" style="display: block;padding-left: 31%; ">(set empty or 0 for free)</div>
+      </div>
+      
+      <div class="inputwrap_upload clearfix">
+              <%= label_tag(:is_downloadable, "Downloadable?") %>
+              <%= f.check_box :is_downloadable %>
+      </div>
+      
+      <input type="submit" value="Submit" class="submit btn">
+    <% end %>
+</div>
+      
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  jQuery('#new_audio').validate({
+    errorClass: 'invalid'
+  });
+});
+</script>

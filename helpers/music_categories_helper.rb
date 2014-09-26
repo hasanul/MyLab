@@ -1,0 +1,2 @@
+module MusicCategoriesHelper
+end

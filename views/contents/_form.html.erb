@@ -1,0 +1,51 @@
+<%= form_for(@content, url: {action: @form_action}) do |f| %>
+  <% if @content.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@content.errors.count, "error") %> prohibited this content from being saved:</h2>
+
+      <ul>
+      <% @content.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <dl>
+  <dt><%= f.label :title %></dt>
+  <dd><%= f.text_field :title, class: "login_inp required" %></dd>
+  </dl>
+  
+  <dl>
+  <dt><%= f.label :position %></dt>
+  <dd><%= f.select(:position, [['Top Menu', 'top'], ['Middle Right', 'right'], ['Footer Menu', 'footer']]) %></dd>
+  </dl>
+  
+  <dl>
+  <dt><%= f.label :text %></dt>
+  <dd style="width: 65.4%;"><%= f.text_area :text, :class => "tinymce", :rows => 20, :cols => 120 %></dd>
+  </dl>
+  
+  <dl>
+  <dt><%= f.label :published %></dt>
+  <dd><%= f.check_box :published %></dd>
+  </dl>
+  
+  <dl>
+  <dt>&nbsp;</dt>
+  <dd><%= f.submit "Submit", class: "login"  %></dd>
+  </dl>
+<% end %>
+
+<script>
+tinymce.init({
+    selector: "textarea",
+    theme: "modern",
+    plugins: [
+         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+         "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+         "save table contextmenu directionality emoticons template paste textcolor"
+   ],
+   toolbar: "insertfile undo redo | fontselect fontsizeselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | preview media fullpage | forecolor backcolor emoticons"
+ }); 
+</script>

@@ -1,0 +1,49 @@
+<% content_for :page_title do %>
+  <title>ArtistNXT | Log in</title>
+<% end %>
+
+<%return_url = ""
+if params[:return_url]!=nil
+  return_url = "?return_url="+params[:return_url]
+end%>
+
+<div class="contentCol">
+    <div class="content">
+        <!-- login start -->
+        <h2 class="logintitle2">Login</h2>
+        
+        <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)+return_url) do |f| %>
+        <div class="loginWrap col-md-6">
+                <div class="inputwrap_login clearfix">
+                        <label id="email_add" name="email_add">Email Address:</label>
+                        <%= f.email_field :email, :autofocus => true, :class => 'form-control' %>
+                </div>
+                <div class="inputwrap_login clearfix">
+                        <label id="login_pass" name="login_pass">Password:</label>
+                        <%= f.password_field :password, :class => 'form-control' %>
+                        
+                        <% if devise_mapping.rememberable? -%>
+                        <span><%= f.check_box :remember_me %> <%= f.label :remember_me %></span>
+                        <% end -%>
+                        
+                        
+                </div>
+                <%= f.submit "Login", :class => 'submit btn' %>
+				<%= render "users/shared/links" %>
+        </div>
+        
+        <% end %>
+        
+        <div class="loginshare col-md-6">
+                <div class="text2">Don't have an account yet? </div>
+                <div class="text3">To Create One For Free <br><%= link_to 'Click Here !'.html_safe, signup_path %></div>
+                <div class="text4">- OR -</div>
+                <div><a href="#"><%= link_to image_tag('/assets/sign-infb.png'), user_omniauth_authorize_path(:facebook, :display=>"page") %></div>
+                <div class="text4">- OR -</div>
+                <div><a href="#"><%= link_to image_tag('/assets/sign-intwitter.png'), user_omniauth_authorize_path(:twitter) %></div>
+                <div class="text4">- OR -</div>
+                <div><a href="#"><%= link_to image_tag('/assets/sign-inyt.png'), user_omniauth_authorize_path(:google_oauth2) %></div>
+        </div>
+        <!-- login end -->
+    </div>	
+</div>
